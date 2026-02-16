@@ -1,0 +1,47 @@
+data:
+  root: "./datasets"
+  image_size: 352
+  train_centers:
+    - "Kvasir"
+    - "CVC-ClinicDB"
+    - "CVC-ColonDB"
+  test_centers:
+    - "ETIS-LaribPolypDB"
+    - "CVC-300"
+  num_workers: 4
+  pin_memory: true
+
+model:
+  backbone: "res2net50"  # "res2net50" or "pvt_v2_b2"
+  decoder_channels: [256, 128, 64, 32]
+  faw_hidden_dim: 64
+  faw_num_layers: 2
+
+meta:
+  algorithm: "maml"
+  inner_lr: 0.01
+  inner_steps: 5
+  outer_lr: 0.001
+  tasks_per_batch: 3
+  support_size: 16
+  query_size: 16
+  first_order: true  # FOMAML by default; set false for full second-order on powerful GPU
+
+training:
+  epochs: 200
+  seed: 42
+  grad_clip: 1.0
+  scheduler: "cosine"
+  warmup_epochs: 10
+  resume: ""  # path to checkpoint to resume from
+
+loss:
+  bce_weight: 0.5
+  dice_weight: 0.5
+  structure_weight: 0.2
+
+logging:
+  backend: "tensorboard"  # "tensorboard" or "wandb"
+  log_dir: "./runs"
+  save_interval: 10
+  wandb_project: "GMLFNet"
