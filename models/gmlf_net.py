@@ -145,7 +145,7 @@ def build_model(cfg):
         decoder_channel=cfg.model.decoder_channels[-1] if hasattr(cfg.model, "decoder_channels") else 32,
         faw_hidden_dim=cfg.model.faw_hidden_dim,
         faw_num_layers=cfg.model.faw_num_layers,
-        pretrained=True,
-        use_faw=True,
+        pretrained=getattr(cfg.model, "pretrained", True),
+        use_faw=getattr(cfg.model, "use_faw", True),
     )
     return model

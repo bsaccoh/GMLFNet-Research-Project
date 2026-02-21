@@ -36,6 +36,12 @@ def load_config(config_path="configs/default.yaml"):
     """Load YAML config file into a Config object."""
     with open(config_path, "r") as f:
         cfg_dict = yaml.safe_load(f)
+    
+    # Allow environment variable override for data root
+    data_root_env = os.environ.get("GMLFNET_DATA_ROOT")
+    if data_root_env and "data" in cfg_dict:
+        cfg_dict["data"]["root"] = data_root_env
+        
     return Config(cfg_dict)
 
 
@@ -100,7 +106,11 @@ def load_checkpoint(model, optimizer=None, path=None):
         print("No checkpoint found, starting from scratch.")
         return 0, {}
 
-    checkpoint = torch.load(path, map_location="cpu", weights_only=False)
+    try:
+        checkpoint = torch.load(path, map_location="cpu", weights_only=True)
+    except Exception as e:
+        print(f"Error loading checkpoint with weights_only=True: {e}. Falling back to weights_only=False.")
+        checkpoint = torch.load(path, map_location="cpu", weights_only=False)
     model.load_state_dict(checkpoint["model_state_dict"])
 
     if optimizer is not None and "optimizer_state_dict" in checkpoint:

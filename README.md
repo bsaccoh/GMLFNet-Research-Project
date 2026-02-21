@@ -36,15 +36,11 @@ python data/download.py --output-dir ./datasets
 python scripts/train_meta.py --config configs/default.yaml
 ```
 
-### Baseline Training (No Meta-Learning)
-```bash
-python scripts/train_baseline.py --config configs/default.yaml
-```
-
-### Resume from Checkpoint (for Colab sessions)
-```bash
-python scripts/train_meta.py --config configs/default.yaml --resume runs/checkpoint_epoch50.pth
-```
+### Running on Kaggle
+If you don't have a local GPU, you can run the training on Kaggle:
+1. Upload the project to a Kaggle dataset or clone the repo in a notebook.
+2. Use the provided [kaggle_training.ipynb](file:///c:/Users/Saccoh1629182/Documents/Babah/BS/College/projects/project/GMLFNet/notebooks/kaggle_training.ipynb) to set up the environment.
+3. Set your `WANDB_API_KEY` in Kaggle Secrets for logging.
 
 ## Evaluation
 

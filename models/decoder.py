@@ -204,7 +204,7 @@ class MultiScaleDecoder(nn.Module):
 
         # Apply FiLM modulation if provided
         if modulations is not None:
-            # modulations[0] is for f1 (unused here), 1->f2, 2->f3, 3->f4
+            # modulations[0]->f2, modulations[1]->f3, modulations[2]->f4
             if len(modulations) >= 3:
                 gamma2, beta2 = modulations[0]
                 gamma3, beta3 = modulations[1]

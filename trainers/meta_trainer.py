@@ -159,16 +159,18 @@ class MAMLMetaTrainer:
 
         # Resume from checkpoint if specified
         if self.cfg.training.resume:
-            checkpoint = torch.load(
-                self.cfg.training.resume,
-                map_location=self.device,
-                weights_only=False,
-            )
-            self.maml.module.load_state_dict(checkpoint["model_state_dict"])
-            self.outer_optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-            start_epoch = checkpoint.get("epoch", 0) + 1
-            best_dice = checkpoint.get("metrics", {}).get("mean_dice", 0.0)
-            print(f"Resumed from epoch {start_epoch}, best_dice={best_dice:.4f}")
+            checkpoint_path = Path(self.cfg.training.resume)
+            if checkpoint_path.exists():
+                start_epoch, metrics = load_checkpoint(
+                    self.maml.module,
+                    optimizer=self.outer_optimizer,
+                    path=checkpoint_path
+                )
+                best_dice = metrics.get("mean_dice", 0.0)
+                start_epoch += 1  # Resume from next epoch
+                print(f"Resumed from epoch {start_epoch}, best_dice={best_dice:.4f}")
+            else:
+                print(f"Warning: Checkpoint not found at {checkpoint_path}. Starting from scratch.")
 
         for epoch in range(start_epoch, self.cfg.training.epochs):
             t0 = time.time()
